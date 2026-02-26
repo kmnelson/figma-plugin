@@ -2,6 +2,12 @@ Below are the steps to get your plugin running. You can also find instructions a
 
   https://www.figma.com/plugin-docs/plugin-quickstart-guide/
 
+This plugin fetches `circle-data/circles.json` from the **deploy** tag of this GitHub repo and draws circles (center x, y and radius r) on the Figma canvas.
+
+**To use:** Create a tag named `deploy` that includes the `circle-data/` folder (e.g. tag the commit that has `circle-data/circles.json`). In Figma, run the plugin and click "Fetch and draw circles". The repo URL is set in `ui.html` (default: `kevinnelson/figma-plugin`).
+
+---
+
 This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
 
 First, download Node.js which comes with NPM. This will allow you to install TypeScript and other

@@ -13,7 +13,7 @@
   "ui": "ui.html",
   "networkAccess": {
     "allowedDomains": [
-      "none"
+      "https://raw.githubusercontent.com"
     ]
   }
 }

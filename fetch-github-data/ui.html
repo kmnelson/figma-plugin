@@ -1,17 +1,43 @@
-<h2>Shape Creator</h2>
-<p>Count: <input id="count" type="number" value="5"></p>
-<button id="create">Create</button>
+<h2>Fetch GitHub data</h2>
+<p>Fetches <code>circle-data/circles.json</code> from tag <strong>deploy</strong> and draws circles.</p>
+<button id="fetch">Fetch and draw circles</button>
 <button id="cancel">Cancel</button>
+<p id="status"></p>
 <script>
+(function () {
+  const GITHUB_REPO = "kevinnelson/figma-plugin";
+  const TAG = "deploy";
+  const DATA_PATH = "circle-data/circles.json";
 
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-shapes', count } }, '*')
-}
+  const url = "https://raw.githubusercontent.com/" + GITHUB_REPO + "/" + TAG + "/" + DATA_PATH;
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
+  function setStatus(text, isError) {
+    const el = document.getElementById("status");
+    el.textContent = text;
+    el.style.color = isError ? "#c00" : "#333";
+  }
 
+  document.getElementById("fetch").onclick = function () {
+    setStatus("Fetching…");
+    fetch(url)
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.status + " " + res.statusText);
+        return res.json();
+      })
+      .then(function (data) {
+        if (!Array.isArray(data)) {
+          throw new Error("Expected JSON array of { x, y, r }");
+        }
+        setStatus("Drawing " + data.length + " circles…");
+        parent.postMessage({ pluginMessage: { type: "draw-circles", circles: data } }, "*");
+      })
+      .catch(function (err) {
+        setStatus("Error: " + err.message, true);
+      });
+  };
+
+  document.getElementById("cancel").onclick = function () {
+    parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+  };
+})();
 </script>
