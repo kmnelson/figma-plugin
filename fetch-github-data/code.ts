@@ -13,6 +13,12 @@ if (figma.editorType === "figma") {
 
   figma.ui.onmessage = (msg: { type: string; circles?: CircleRow[]; message?: string }) => {
     if (msg.type === "draw-circles" && msg.circles && Array.isArray(msg.circles)) {
+      const frame = figma.currentPage.findOne((n) => n.type === "FRAME" && n.name === "CircleCanvas") as FrameNode | null;
+      if (!frame) {
+        figma.notify("Frame 'CircleCanvas' not found on this page.", { error: true });
+        figma.closePlugin();
+        return;
+      }
       const nodes: SceneNode[] = [];
       for (let i = 0; i < msg.circles.length; i++) {
         const row = msg.circles[i];
@@ -24,7 +30,7 @@ if (figma.editorType === "figma") {
         ellipse.x = x - r;
         ellipse.y = y - r;
         ellipse.fills = [{ type: "SOLID", color: { r: 0.2, g: 0.5, b: 0.9 } }];
-        figma.currentPage.appendChild(ellipse);
+        frame.appendChild(ellipse);
         nodes.push(ellipse);
       }
       if (nodes.length > 0) {
@@ -45,6 +51,12 @@ if (figma.editorType === "figjam") {
 
   figma.ui.onmessage = (msg: { type: string; circles?: CircleRow[]; message?: string }) => {
     if (msg.type === "draw-circles" && msg.circles && Array.isArray(msg.circles)) {
+      const frame = figma.currentPage.findOne((n) => n.type === "FRAME" && n.name === "CircleCanvas") as FrameNode | null;
+      if (!frame) {
+        figma.notify("Frame 'CircleCanvas' not found on this page.", { error: true });
+        figma.closePlugin();
+        return;
+      }
       const nodes: SceneNode[] = [];
       for (let i = 0; i < msg.circles.length; i++) {
         const row = msg.circles[i];
@@ -56,7 +68,7 @@ if (figma.editorType === "figjam") {
         ellipse.x = x - r;
         ellipse.y = y - r;
         ellipse.fills = [{ type: "SOLID", color: { r: 0.2, g: 0.5, b: 0.9 } }];
-        figma.currentPage.appendChild(ellipse);
+        frame.appendChild(ellipse);
         nodes.push(ellipse);
       }
       if (nodes.length > 0) {
