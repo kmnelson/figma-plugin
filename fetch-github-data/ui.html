@@ -19,19 +19,28 @@
 
   document.getElementById("fetch").onclick = function () {
     setStatus("Fetching…");
+    console.log("[fetch-github-data] Fetching:", url);
     fetch(url)
       .then(function (res) {
+        console.log("[fetch-github-data] Response:", res.status, res.statusText);
         if (!res.ok) throw new Error(res.status + " " + res.statusText);
         return res.json();
       })
       .then(function (data) {
+        console.log("[fetch-github-data] Parsed data:", data);
+        console.log("[fetch-github-data] Is array?", Array.isArray(data), "length:", data && data.length);
+        if (data && data.length > 0) {
+          console.log("[fetch-github-data] First row:", data[0], "types: x=" + typeof data[0].x + " y=" + typeof data[0].y + " r=" + typeof data[0].r);
+        }
         if (!Array.isArray(data)) {
           throw new Error("Expected JSON array of { x, y, r }");
         }
         setStatus("Drawing " + data.length + " circles…");
+        console.log("[fetch-github-data] Sending to plugin: type=draw-circles, circles.length=" + data.length);
         parent.postMessage({ pluginMessage: { type: "draw-circles", circles: data } }, "*");
       })
       .catch(function (err) {
+        console.error("[fetch-github-data] Error:", err);
         setStatus("Error: " + err.message, true);
       });
   };
